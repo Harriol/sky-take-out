@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SetmealDishMapper">
+    <insert id="insertBatch">
+        insert into setmeal_dish (setmeal_id,dish_id,name,price,copies)
+        values
+            <foreach collection="setmealDishes" item="smd" separator=",">
+                (#{smd.setmealId},#{smd.dishId},#{smd.name},#{smd.price},#{smd.copies})
+            </foreach>
+    </insert>
+    <delete id="deleteBatchBySetmealId">
+        delete from setmeal_dish where setmeal_id in
+        <foreach collection="setmealIds" item="sid" open="(" close=")" separator=",">
+            #{sid}
+        </foreach>
+    </delete>
+
+    <select id="getSetmealIdsByDishIds" resultType="java.lang.Long">
+        select setmeal_id from setmeal_dish where dish_id in
+        <foreach collection="dishIds" item="dishId" separator="," open="(" close=")">
+            #{dishId}
+        </foreach>
+    </select>
+</mapper>
