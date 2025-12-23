@@ -59,12 +59,11 @@ public interface DishMapper {
     void update(Dish dish);
 
     /**
-     * 根据分类id查询菜品
-     * @param categoryId
+     * 动态条件查询菜品
+     * @param dish
      * @return
      */
-    @Select("select * from dish where category_id=#{categoryId}")
-    List<Dish> listByCategoryId(Long categoryId);
+    List<Dish> list(Dish dish);
 
     /**
      * 根据id起售、停售商品
@@ -75,7 +74,7 @@ public interface DishMapper {
     void updateStatusById(Long id, Integer status);
 
     /**
-     * 根据套餐id获取关系菜品的id
+     * 根据套餐id获取关系菜品
      * @param setmealId
      * @return
      */

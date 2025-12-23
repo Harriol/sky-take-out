@@ -18,11 +18,10 @@ import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -157,12 +156,17 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据分类id查询菜品
+     *
      * @param categoryId
      * @return
      */
     @Override
     public List<Dish> listByCategoryId(Long categoryId) {
-        List<Dish> dishList = dishMapper.listByCategoryId(categoryId);
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        List<Dish> dishList = dishMapper.list(dish);
         return dishList;
     }
 
@@ -174,5 +178,32 @@ public class DishServiceImpl implements DishService {
     @Override
     public void updateStatusById(Integer status, Long id) {
         dishMapper.updateStatusById(id, status);
+    }
+
+    /**
+     * 根据分类id查询菜品
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<DishVO> listWithFlavors(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        List<DishVO> dishVOList = new ArrayList<>();
+        //查询菜品信息
+        List<Dish> list = dishMapper.list(dish);
+
+        //查询菜品相关口味信息
+        //拼接成vo对象
+        for (Dish d : list) {
+            List<DishFlavor> flavors = dishFlavorMapper.getByDishId(d.getId());
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d, dishVO);
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+        return dishVOList;
     }
 }

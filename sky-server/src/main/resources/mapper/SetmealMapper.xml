@@ -27,7 +27,6 @@
         </foreach>
     </delete>
 
-
     <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
         select s.*, c.name as categoryName
         from setmeal s
@@ -40,5 +39,23 @@
             </where>
         order by s.create_time desc
 
+    </select>
+
+    <select id="list" resultType="com.sky.entity.Setmeal">
+        select * from setmeal
+        <where>
+            <if test="categoryId != null">and category_id=#{categoryId} </if>
+            <if test="name != null">and `name` like concat('%',#{name},'%') </if>
+            <if test="status != null">and status=#{status}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getDishItemBySetmealId" resultType="com.sky.vo.DishItemVO">
+        select sd.name, sd.copies, d.image, d.description
+        from setmeal_dish sd
+        left join dish d
+        on sd.dish_id=d.id
+        where sd.setmeal_id=#{setmealId}
     </select>
 </mapper>
